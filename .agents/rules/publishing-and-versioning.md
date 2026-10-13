@@ -1,6 +1,6 @@
 # Publishing and Versioning Workflow for Tabby Plugins
 
-Whenever changes, bug fixes, or enhancements are made to plugins (`tabby-quick-cmds-toolbar`, `tabby-error-highlight`, etc.):
+Whenever changes, bug fixes, or enhancements are made to plugins (`tabby-quick-cmds-toolbar`, `tabby-error-highlight`, `tabby-router-event-highlight`, etc.):
 
 1. **Synchronized Versioning (GitHub + npmjs):**
    - Every time code or metadata is modified, the version must be incremented (`patch`, `minor`, or `major`).
