@@ -1,0 +1,52 @@
+{
+  "name": "tabby-router-event-highlight",
+  "version": "1.0.0",
+  "description": "Tabby terminal plugin to highlight router console events: 'Error:' in red, 'UP' in green, and 'DOWN' in orange",
+  "main": "dist/index.js",
+  "module": "index.ts",
+  "typings": "dist/index.d.ts",
+  "type": "commonjs",
+  "license": "MIT",
+  "author": {
+    "name": "Rubén León (rubenleonn)",
+    "email": "rubenleon@gmail.com",
+    "url": "https://github.com/rubenleonn"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubenleonn/tabby-router-event-highlight.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rubenleonn/tabby-router-event-highlight/issues"
+  },
+  "homepage": "https://github.com/rubenleonn/tabby-router-event-highlight#readme",
+  "keywords": [
+    "tabby-plugin",
+    "router-event-highlight",
+    "error-highlight",
+    "router-console",
+    "cisco",
+    "huawei",
+    "juniper",
+    "highlight"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && webpack --progress --color",
+    "watch": "webpack --progress --color --watch",
+    "deploy": "npm run build && mkdir -p \"$HOME/Library/Application Support/tabby/plugins/node_modules/tabby-router-event-highlight\" && cp -rf ./dist ./package.json \"$HOME/Library/Application Support/tabby/plugins/node_modules/tabby-router-event-highlight/\"",
+    "pack": "npm run build && npm pack && mkdir -p .portable/tabby-router-event-highlight && cp -rf dist package.json README.md LICENSE .portable/tabby-router-event-highlight/ && tar -czf tabby-router-event-highlight-portable.tar.gz -C .portable tabby-router-event-highlight && tar -cf tabby-router-event-highlight-portable.tar -C .portable tabby-router-event-highlight && rm -rf .portable"
+  },
+  "devDependencies": {
+    "@angular/common": "^15.2.10",
+    "@angular/core": "^15.2.10",
+    "tabby-core": "^1.0.231-nightly.0",
+    "tabby-terminal": "^1.0.231-nightly.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^4.9.5",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4"
+  }
+}
