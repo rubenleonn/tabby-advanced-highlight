@@ -16,7 +16,7 @@ export default () => ({
   },
   resolve: {
     modules: [".", "src", "node_modules"].map((x) => path.join(__dirname, x)),
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js", ".html", ".scss", ".css"],
   },
   module: {
     rules: [
@@ -27,7 +27,15 @@ export default () => ({
           configFile: path.resolve(__dirname, "tsconfig.json"),
         },
       },
+      {
+        test: /\.html$/,
+        type: "asset/source",
+      },
+      {
+        test: /\.(scss|css)$/,
+        type: "asset/source",
+      },
     ],
   },
-  externals: ["fs", /^rxjs/, /^@angular/, /^tabby-/],
+  externals: ["fs", /^rxjs/, /^@angular/, /^@ng-bootstrap/, /^tabby-/],
 });

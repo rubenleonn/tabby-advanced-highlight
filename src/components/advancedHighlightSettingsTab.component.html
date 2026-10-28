@@ -1,0 +1,70 @@
+<div class="event-highlight-settings">
+  <!-- Cabecera -->
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h3 class="mb-1 d-flex align-items-center">
+        <span>⚡️ Advanced Highlight</span>
+      </h3>
+      <div class="text-muted small">
+        Introduce una regla por línea con los valores separados por comas.
+      </div>
+    </div>
+    <div>
+      <button class="btn btn-primary" (click)="save()" title="Guardar y aplicar reglas">
+        <i class="fas fa-save mr-1"></i>&nbsp;Guardar
+      </button>
+    </div>
+  </div>
+
+  <!-- Panel de ayuda y referencia de formato -->
+  <div class="card mb-3 help-card">
+    <div class="format-syntax mb-0 text-monospace p-2 rounded">
+      "<code>texto|regex</code>", esRegEx<code>1|0</code>, esCase<code>1|0</code>, fg<code>HEX</code>,
+      [bg<code>HEX</code>], activa<code>1|0</code>
+    </div>
+  </div>
+
+  <!-- Alerta de confirmación al guardar -->
+  <div class="alert alert-success py-2 mb-3 d-flex align-items-center justify-content-between" *ngIf="saveSuccess">
+    <div>
+      <i class="fas fa-check-circle mr-1"></i> Reglas guardadas y aplicadas a las sesiones de terminal.
+    </div>
+  </div>
+
+  <!-- Editor de reglas en texto multilínea -->
+  <div class="card mb-3 p-0">
+    <textarea class="form-control rules-textarea" [(ngModel)]="rulesText" rows="20" spellcheck="false"
+      placeholder="&quot;patrón&quot;, 0|1 (regex), 0|1 (case sensitive), HEX_TEXTO, HEX_FONDO, 0|1 (activa)"></textarea>
+  </div>
+
+  <!-- Selector de color auxiliar para copiar códigos HEX -->
+  <div class="card mb-3 picker-card">
+    <div class="card-body py-2 px-3">
+      <div class="picker-container d-flex align-items-center flex-wrap gap-4">
+        <!-- Input nativo color swatch y campo con botón de copiar -->
+        <div class="picker-control-group d-flex align-items-center gap-2">
+          <input type="color" class="form-control form-control-color picker-swatch" [value]="pickerColorHex"
+            (input)="onPickerInput($event)" title="Haz clic para elegir un color con la paleta visual" />
+          <div class="input-group" style="width: auto;">
+            <input type="text" class="form-control text-monospace hex-input text-uppercase font-weight-bold"
+              [(ngModel)]="pickerHexRaw" (ngModelChange)="onHexInputChange($event)" placeholder="00FF00" maxlength="6"
+              style="width: 90px;" />
+            <button class="btn btn-secondary d-flex align-items-center" type="button" (click)="copyColor()"
+              [class.btn-success]="copySuccess" title="Copiar código HEX">
+              <i class="fas me-1" [class.fa-check]="copySuccess" [class.fa-copy]="!copySuccess"></i>
+              <span>{{ copySuccess ? '¡Copiado!' : 'Copiar' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Paleta de colores rápidos frecuentes -->
+        <div class="quick-colors-section d-flex align-items-center gap-2">
+          <div class="quick-swatches d-flex align-items-center flex-wrap gap-2">
+            <button *ngFor="let c of quickColors" type="button" class="btn quick-swatch-btn"
+              [style.backgroundColor]="'#' + c" [title]="'Seleccionar #' + c" (click)="selectQuickColor(c)"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

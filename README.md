@@ -1,92 +1,84 @@
-# tabby-router-event-highlight
+# tabby-advanced-highlight
 
-Plugin ultraligero y de alto rendimiento para **[Tabby](https://tabby.sh/)**, diseñado específicamente para conexiones por consola a routers y conmutadores de red (Cisco, Huawei, Juniper, etc.) y terminales locales.
+[![npm version](https://img.shields.io/npm/v/tabby-advanced-highlight.svg)](https://www.npmjs.com/package/tabby-advanced-highlight)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-*Fork mejorado y extendido de `tabby-error-highlight`.*
+**Advanced real-time text and regex highlighting plugin for [Tabby](https://tabby.sh/) terminal.**
 
-Creado por [Rubén León (rubenleonn)](https://github.com/rubenleonn).
-
----
-
-## ¿Qué hace?
-
-Resalta automáticamente y de forma visualmente llamativa los eventos más críticos en conexiones serie, SSH y consolas de red:
-
-1. **`Error:`** (insensible a mayúsculas: `Error:`, `ERROR:`, `error:`): Resaltado en **rojo vivo** con texto en blanco puro (`\x1b[38;2;255;255;255;48;2;220;0;0m`). Ideal para detectar fallos de sintaxis o comandos erróneos al pegar configuraciones.
-2. **`UP`** (case sensitive, palabra independiente): Resaltado en **verde vivo** con texto en blanco puro (`\x1b[38;2;255;255;255;48;2;22;160;50m`). Para identificar interfaces activas, transiciones de protocolo y estados UP al instante.
-3. **`DOWN`** (case sensitive, palabra independiente): Resaltado en **naranja vivo** con texto en blanco puro (`\x1b[38;2;255;255;255;48;2;230;95;0m`). Para alertar de interfaces caídas, caídas de vecinos BGP/OSPF o líneas desconectadas.
-
-Usa códigos ANSI TrueColor RGB (24-bit) para garantizar una legibilidad uniforme y pastillas de color nítidas sin importar el tema del terminal ni la paleta de colores configurada.
+Customizable live pattern highlighter designed for network engineers, sysadmins, and developers. Highlight IP addresses, router interface states (`UP`/`DOWN`), error logs, and arbitrary patterns in Truecolor (24-bit ANSI) with an integrated settings panel.
 
 ---
 
-## Características
+## ✨ Features
 
-* **Protección contra falsos positivos:** Emplea comprobación estricta de límites de palabra (`\b` y estados de stream) para evitar resaltar `UP` o `DOWN` dentro de comandos o palabras compuestas habituales en consolas (por ejemplo, `GROUP`, `SHUTDOWN`, `SETUP`, `BACKUP`, `UPDATE`, `DOWNLOAD`, `STARTUP-CONFIG`).
-* **Optimizado para conexiones serie (UART / 9600 baudios):** Implementa un acumulador de flujo inteligente (*stream buffer*) con temporizador de 25ms para ensamblar paquetes fragmentados a baja velocidad sin introducir latencia perceptible al teclear o recibir prompts.
-* **Cero configuración:** No requiere menús, perfiles ni configuraciones manuales. Se conecta automáticamente a todas las sesiones de terminal (Serie, Local, SSH, Telnet).
-* **Ultraligero:** Bundle compilado de apenas unos pocos kilobytes, sin dependencias pesadas ni interfaces gráficas innecesarias.
-
----
-
-## Compilación y despliegue local
-
-Para compilar e instalar en tu Tabby local en macOS:
-
-```bash
-npm run deploy
-```
-
-Para generar los paquetes portables (`.tar`, `.tar.gz` y `.tgz`):
-
-```bash
-npm run pack
-```
-
-O para compilar únicamente el bundle:
-
-```bash
-npm run build
-```
+- **⚡ PCRE / Perl 5 Regular Expression Engine**: Full support for regex patterns including smart word boundaries (`\b`), lookaheads/lookbehinds (`(?<!...)`), non-capturing groups `(?:...)`, character classes, and inline flags `(?i)`.
+- **🎨 Visual Color Picker & Quick Swatches**: Visual HTML5 color swatch picker with Hex input, one-click copy, and quick preset color pills.
+- **🛠️ Interactive Live Settings Panel**: Edit all highlight rules directly in Tabby's Settings under **Highlight** (`⚡️ Advanced Highlight`), with instant live reload across active terminal tabs.
+- **🛡️ Non-Destructive ANSI Injection**: Injects 24-bit Truecolor foreground and background ANSI sequences without breaking existing terminal colors or prompt styling.
+- **⏱️ Serial Stream Accumulator (25ms)**: Solves micro-chunk fragmentation on slow serial lines (e.g., Cisco/Huawei UART at 9600 baud) so split words across packets are reconstructed and highlighted accurately.
+- **📦 18 Out-of-the-Box Defaults**: Pre-configured with battle-tested rules for network equipment (Cisco, Huawei, Juniper), IPv4 addresses, interfaces (`GigabitEthernet`, `gi`, `vlanif`, `loopback`), log levels (`error`, `warning`, `info`), and interface statuses.
 
 ---
 
-## Instalación portable en cualquier equipo
+## 📋 Rule Syntax
 
-### Opción 1: Descomprimir el `.tar` / `.tar.gz` portable (Sin necesidad de npm ni Node)
+Each rule is written as a comma-separated line in the settings editor:
 
-Descomprime `tabby-router-event-highlight-portable.tar.gz` (o `.tar`) dentro del directorio de plugins de Tabby:
-
-* **macOS:** `~/Library/Application Support/tabby/plugins/node_modules/`
-* **Linux:** `~/.config/tabby/plugins/node_modules/`
-* **Windows:** `%APPDATA%\tabby\plugins\node_modules\`
-* **Tabby Portable (Windows/Linux):** `<carpeta_tabby>\data\plugins\node_modules\`
-
-La estructura final debe quedar así:
-```
-.../plugins/node_modules/tabby-router-event-highlight/
-├── dist/
-│   ├── index.js
-│   └── index.js.LICENSE.txt
-├── package.json
-└── README.md
+```csv
+"pattern", isRegex, caseSensitive, fgColor, [bgColor], enabled
 ```
 
-### Opción 2: Usar el tarball `.tgz` con npm o Tabby `package.json`
+| Field | Type | Description |
+|---|---|---|
+| `"pattern"` | String | Pattern enclosed in double quotes. Can be plain text or a regex pattern. |
+| `isRegex` | `0` or `1` | `1` = Evaluate as regular expression, `0` = Literal text match. |
+| `caseSensitive` | `0` or `1` | `1` = Case sensitive match, `0` = Case insensitive (`(?i)`). |
+| `fgColor` | Hex | Foreground text color in 6-digit hex (e.g. `FFFFFF`, `DC0000`). |
+| `bgColor` | Hex | *(Optional)* Background color in 6-digit hex. Leave empty for transparent background. |
+| `enabled` | `0` or `1` | `1` = Rule active (default), `0` = Temporarily disabled. |
 
-Añade la ruta del archivo `.tgz` a las dependencias de `package.json` en la carpeta de plugins de Tabby:
+### Syntax Examples
 
-```json
-{
-  "name": "tabby-plugins",
-  "dependencies": {
-    "tabby-router-event-highlight": "file:/ruta/a/tabby-router-event-highlight-1.0.0.tgz"
-  }
-}
+```csv
+"error:.*", 1, 0, FFFFFF, DC0000, 1
+"\bup(?:\(s\))?", 1, 0, 3C9F50, , 1
+"\bdown\b", 1, 0, DC0000, , 1
+"GigabitEthernet\d/\d/\d{1,2}(\.\d{1,10})?", 1, 0, 5CC7C7, , 1
+"(?<![\d.])(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])(?:\/\d{1,2})?(?!\.?\d)", 1, 0, ECEC74, , 1
 ```
 
 ---
 
-## Licencia
+## ⚡ Performance Considerations
 
-[MIT](LICENSE)
+`tabby-advanced-highlight` evaluates rules in real time across the incoming terminal stream in user space:
+- **Daily Interactive Use**: Extremely responsive and negligible CPU overhead during standard shell sessions, SSH connections, serial consoles, and router configuration.
+- **High-throughput Bulk Streams**: If you continuously dump millions of lines (e.g. continuous kernel debugs or `cat` on multi-gigabyte log files), having dozens of complex regex rules with negative lookbehinds will introduce CPU load in JavaScript. Keep regex patterns concise and disable unused rules when streaming massive datasets.
+
+---
+
+## 🚀 Installation
+
+### From Tabby Settings (Recommended)
+1. Open Tabby **Settings** (`Ctrl+,` or `Cmd+,`).
+2. Go to **Plugins**.
+3. Search for `tabby-advanced-highlight`.
+4. Click **Install** and restart Tabby.
+
+### Manual Installation
+Download the release tarball and extract it into your Tabby plugins directory:
+- **macOS**: `~/Library/Application Support/tabby/plugins/node_modules/tabby-advanced-highlight`
+- **Linux**: `~/.config/tabby/plugins/node_modules/tabby-advanced-highlight`
+- **Windows**: `%APPDATA%\tabby\plugins\node_modules\tabby-advanced-highlight`
+
+---
+
+## 👤 Author
+
+- **Rubén León**
+  - GitHub: [@rubenleonn](https://github.com/rubenleonn)
+  - npm: [@rubenleon](https://www.npmjs.com/~rubenleon)
+
+## 📄 License
+
+MIT © [Rubén León](LICENSE)

@@ -1,10 +1,15 @@
 import { Injectable } from "@angular/core";
 import { BaseSession, BaseTerminalTabComponent, TerminalDecorator } from "tabby-terminal";
-import { RouterEventHighlightMiddleware } from "./middleware";
+import { AdvancedHighlightMiddleware } from "./middleware";
+import { AdvancedHighlightService } from "./services/advancedHighlight.service";
 
 @Injectable()
-export class RouterEventHighlightDecorator extends TerminalDecorator {
+export class AdvancedHighlightDecorator extends TerminalDecorator {
   private attachedSessions = new WeakSet<BaseSession>();
+
+  constructor(private service: AdvancedHighlightService) {
+    super();
+  }
 
   attach(tab: BaseTerminalTabComponent<any>): void {
     if (tab.sessionChanged$) {
@@ -25,7 +30,7 @@ export class RouterEventHighlightDecorator extends TerminalDecorator {
     }
     this.attachedSessions.add(session);
 
-    const middleware = new RouterEventHighlightMiddleware();
+    const middleware = new AdvancedHighlightMiddleware(this.service);
     session.middleware.push(middleware);
   }
 }
