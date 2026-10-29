@@ -1,6 +1,6 @@
 {
   "name": "tabby-advanced-highlight",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tabby plugin for advanced terminal text and regex highlighting with custom colors and real-time settings",
   "main": "dist/index.js",
   "module": "index.ts",
