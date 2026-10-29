@@ -48,12 +48,10 @@ export class AdvancedHighlightMiddleware extends SessionMiddleware {
       return;
     }
 
-    // Buscamos el último límite seguro (salto de línea o espacio)
+    // Buscamos el último límite seguro (salto de línea)
     const lastSafeBreak = Math.max(
       this.buffer.lastIndexOf("\n"),
-      this.buffer.lastIndexOf("\r"),
-      this.buffer.lastIndexOf(" "),
-      this.buffer.lastIndexOf("\t")
+      this.buffer.lastIndexOf("\r")
     );
 
     if (lastSafeBreak !== -1) {
@@ -62,7 +60,8 @@ export class AdvancedHighlightMiddleware extends SessionMiddleware {
       this.emit(this.highlight(readyPart));
     }
 
-    // Si aún queda texto en el buffer sin límite delimitado, programamos un flush rápido (25ms)
+    // Si aún queda texto en el buffer sin salto de línea (ej. prompts o fragmentos pendientes),
+    // programamos un flush rápido (25ms) por si no llegan más datos
     if (this.buffer.length > 0) {
       this.armFlushTimer(25);
     }

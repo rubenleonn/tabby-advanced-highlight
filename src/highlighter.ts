@@ -201,15 +201,17 @@ export function compileRule(rule: HighlightRule, id: number): CompiledHighlightR
   }
 
   let colorAnsi = "";
+  let resetAnsi = "\x1b[0m";
   if (fg && bg) {
     colorAnsi = `\x1b[38;2;${fg.r};${fg.g};${fg.b};48;2;${bg.r};${bg.g};${bg.b}m`;
+    resetAnsi = "\x1b[0m";
   } else if (fg) {
     colorAnsi = `\x1b[38;2;${fg.r};${fg.g};${fg.b}m`;
+    resetAnsi = "\x1b[39m";
   } else if (bg) {
     colorAnsi = `\x1b[48;2;${bg.r};${bg.g};${bg.b}m`;
+    resetAnsi = "\x1b[49m";
   }
-
-  const resetAnsi = "\x1b[0m";
 
   let regex: RegExp;
 
